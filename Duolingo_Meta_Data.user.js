@@ -12,34 +12,38 @@
 
 // Fun fact: all this was painfully extracted from Duolingo's source code.
 // This is essentially the exact code used for drawing the graph of xp gains.
-var getEpochSeconds = function () {
+function getEpochSeconds() {
     return Math.floor(Date.now() / 1000)
     }
 
-var parseTimezoneOffset = function (timezoneOffset) {
+function parseTimezoneOffset(timezoneOffset) {
     var offset;
     try {
-        offset = parseInt(timezoneOffset, 10) / 100
+        offset = parseInt(timezoneOffset, 10)
     } catch (n) {
         console.log('Invalid timezoneOffset', {
             timezoneOffset: timezoneOffset
         })
         offset = 0
     }
-    return offset
+    var sign = Math.sign(offset)
+    offset = Math.abs(offset)
+    var hours = Math.floor(offset / 100) + (offset % 100) / 60
+    
+    return sign * hours
 }
 
-var getSecondsElapsedToday = function (timezoneOffset) {
+function getSecondsElapsedToday(timezoneOffset) {
     var nowTime = new Date()
     var seconds = 3600 * (nowTime.getUTCHours() + parseTimezoneOffset(timezoneOffset)) + 60 * nowTime.getUTCMinutes() + nowTime.getUTCSeconds()
     return (seconds + 86400) % 86400
 }
 
-var getXpToday = function (timezoneOffset, xpGains) {
+function getXpToday(timezoneOffset, xpGains) {
     return getXpPastWeek(timezoneOffset, xpGains)[6]
 }
 
-var getXpPastWeek = function (timezoneOffset, xpGains) {
+function getXpPastWeek(timezoneOffset, xpGains) {
     var weeklyGains = [0,0,0,0,0,0,0]
 
     if (!xpGains) return n
@@ -57,7 +61,7 @@ var getXpPastWeek = function (timezoneOffset, xpGains) {
 
 
 // Gets the actual total xp for the current course.
-var getCurrentTotalXp = function() {
+function getCurrentTotalXp() {
     var data = JSON.parse(localStorage['duo.state'])
     if (!data) {
         return 0
@@ -69,7 +73,7 @@ var getCurrentTotalXp = function() {
 
 
 // Gets the current actual xp for today
-var getCurrentDailyXp = function() {
+function getCurrentDailyXp() {
     var data = JSON.parse(localStorage['duo.state'])
     var timezoneOffset = data.user.timezoneOffset
     var xpGains = data.user.xpGains
@@ -78,7 +82,7 @@ var getCurrentDailyXp = function() {
 }
     
 // Adds total xp to the dropdown menu
-var insertTotalXp = function(xp) {
+function insertTotalXp(xp) {
     if (document.querySelectorAll('._1oVFS').length == 0) {
         return
     }
@@ -98,14 +102,14 @@ var insertTotalXp = function(xp) {
 
 
 // Updates an existing total xp indicator
-var updateTotalXp = function(xp) {
+function updateTotalXp(xp) {
     var xpElement = document.getElementById('total-xp')
     xpElement.firstChild.textContent = ' ' + xp + ' xp'
 }
 
 
 // Adds daily xp to the streak indicator
-var insertDailyXp = function(xp) {
+function insertDailyXp(xp) {
     if (document.querySelectorAll('._2nE-k').length == 0) {
         return
     }
@@ -123,13 +127,13 @@ var insertDailyXp = function(xp) {
 }
 
 // Updates an existing daily xp indicator
-var updateDailyXp = function(xp) {
+function updateDailyXp(xp) {
     var xpElement = document.getElementById('daily-xp')
     xpElement.firstChild.textContent = ': ' + xp + ' xp'
 }
 
 
-var routine = function() {
+async function routine() {
     var totalXp = getCurrentTotalXp()
     var dailyXp = getCurrentDailyXp()
     insertTotalXp(totalXp)
@@ -137,14 +141,14 @@ var routine = function() {
 }
 
 
-// Run at document load and every time an AJAX request completes
-// The data is only updated after AJAX requests
+// Run at document load...
 if (document.readyState === 'complete') { routine() }
 else {
     window.addEventListener('load', routine)
 }
 
-
+// and every time an AJAX request completes
+// The data is only updated after AJAX requests
 (function() {
     var origOpen = XMLHttpRequest.prototype.open
     XMLHttpRequest.prototype.open = function() {
