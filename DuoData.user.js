@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name        Duolingo Meta Data
-// @namespace   https://www.github.com/zeta12ti/Duolingo-Course-Hider
+// @name        DuoData
+// @namespace   https://github.com/zeta12ti/DuoData
 // @description Adds some hidden data to Duolingo, including daily xp and total xp (on the top bar), fluency changes after a practice, and more.
 // @include     https://*.duolingo.com/*
 // @run-at      document-start
-// @version     1
+// @version     1.1
 // @grant       none
 // ==/UserScript==
 
@@ -14,7 +14,7 @@
 // This is essentially the exact code used for drawing the graph of xp gains.
 function getEpochSeconds() {
     return Math.floor(Date.now() / 1000)
-    }
+}
 
 function parseTimezoneOffset(timezoneOffset) {
     var offset;
@@ -29,7 +29,7 @@ function parseTimezoneOffset(timezoneOffset) {
     var sign = Math.sign(offset)
     offset = Math.abs(offset)
     var hours = Math.floor(offset / 100) + (offset % 100) / 60
-    
+
     return sign * hours
 }
 
@@ -80,7 +80,7 @@ function getCurrentDailyXp() {
 
     return getXpToday(timezoneOffset, xpGains)
 }
-    
+
 // Adds total xp to the dropdown menu
 function insertTotalXp(xp) {
     if (document.querySelectorAll('._1oVFS').length === 0) {
@@ -91,7 +91,7 @@ function insertTotalXp(xp) {
     }
 
     var xpElement = document.createElement('span')
-    
+
     var text = document.createTextNode(' ' + xp + ' xp')
     xpElement.appendChild(text)
     xpElement.id = 'total-xp'
@@ -119,7 +119,7 @@ function insertDailyXp(xp) {
 
     var xpElement = document.createElement('span')
 
-    var text = document.createTextNode(': ' + xp + ' xp')
+    var text = document.createTextNode(' : ' + xp + ' xp')
     xpElement.appendChild(text)
     xpElement.id = 'daily-xp'
 
@@ -129,7 +129,7 @@ function insertDailyXp(xp) {
 // Updates an existing daily xp indicator
 function updateDailyXp(xp) {
     var xpElement = document.getElementById('daily-xp')
-    xpElement.firstChild.textContent = ': ' + xp + ' xp'
+    xpElement.firstChild.textContent = ' : ' + xp + ' xp'
 }
 
 
@@ -148,7 +148,7 @@ else {
 }
 
 // and every time an AJAX request completes
-// The data is only updated after AJAX requests
+// The data is only updated after AJAX requests anyway
 (function() {
     var origOpen = XMLHttpRequest.prototype.open
     XMLHttpRequest.prototype.open = function() {
