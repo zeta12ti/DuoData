@@ -83,7 +83,7 @@ function getCurrentDailyXp() {
     
 // Adds total xp to the dropdown menu
 function insertTotalXp(xp) {
-    if (document.querySelectorAll('._1oVFS').length == 0) {
+    if (document.querySelectorAll('._1oVFS').length === 0) {
         return
     }
     if (document.getElementById('total-xp') !== null) {
@@ -110,7 +110,7 @@ function updateTotalXp(xp) {
 
 // Adds daily xp to the streak indicator
 function insertDailyXp(xp) {
-    if (document.querySelectorAll('._2nE-k').length == 0) {
+    if (document.querySelectorAll('._2nE-k').length === 0) {
         return
     }
     if (document.getElementById('daily-xp') !== null) {
