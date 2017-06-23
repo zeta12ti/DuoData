@@ -79,6 +79,9 @@ var getCurrentDailyXp = function() {
     
 // Adds total xp to the dropdown menu
 var insertTotalXp = function(xp) {
+    if (document.querySelectorAll('._1oVFS').length == 0) {
+        return
+    }
     if (document.getElementById('total-xp') !== null) {
         return updateTotalXp(xp)
     }
@@ -103,6 +106,9 @@ var updateTotalXp = function(xp) {
 
 // Adds daily xp to the streak indicator
 var insertDailyXp = function(xp) {
+    if (document.querySelectorAll('._2nE-k').length == 0) {
+        return
+    }
     if (document.getElementById('daily-xp') !== null) {
         return updateDailyXp(xp)
     }
