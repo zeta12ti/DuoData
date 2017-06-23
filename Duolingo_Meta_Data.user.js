@@ -30,7 +30,7 @@ var parseTimezoneOffset = function (timezoneOffset) {
 }
 
 var getSecondsElapsedToday = function (timezoneOffset) {
-    var nowTime = new Date
+    var nowTime = new Date()
     var seconds = 3600 * (nowTime.getUTCHours() + parseTimezoneOffset(timezoneOffset)) + 60 * nowTime.getUTCMinutes() + nowTime.getUTCSeconds()
     return (seconds + 86400) % 86400
 }
@@ -45,10 +45,12 @@ var getXpPastWeek = function (timezoneOffset, xpGains) {
     if (!xpGains) return n
 
     for (var secondsToday = getSecondsElapsedToday(timezoneOffset), epochSeconds = getEpochSeconds(), i = 0; i < xpGains.length; i++) {
-        var s = xpGains[i],
-        var lastMidnight = epochSeconds - secondsToday + 86400,
-        var daysAgo = Math.floor((lastMidnight - xpGains[i].time) / 86400);
-        0 <= daysAgo && daysAgo <= 6 && (weeklyGains[6 - daysAgo] += xpGains[i].xp)
+        var s = xpGains[i]
+        var lastMidnight = epochSeconds - secondsToday + 86400
+        var daysAgo = Math.floor((lastMidnight - xpGains[i].time) / 86400)
+        if (0 <= daysAgo && daysAgo <= 6) {
+            weeklyGains[6 - daysAgo] += xpGains[i].xp
+        }
     }
     return weeklyGains
 }
@@ -121,12 +123,28 @@ var updateDailyXp = function(xp) {
 }
 
 
-var routine = async function() {
-    totalXp = getCurrentTotalXp()
-    dailyXp = getCurrentDailyXp()
+var routine = function() {
+    var totalXp = getCurrentTotalXp()
+    var dailyXp = getCurrentDailyXp()
     insertTotalXp(totalXp)
     insertDailyXp(dailyXp)
 }
 
 
-setInterval(routine, 1000)
+// Run at document load and every time an AJAX request completes
+// The data is only updated after AJAX requests
+if (document.readyState === 'complete') { routine() }
+else {
+    window.addEventListener('load', routine)
+}
+
+
+(function() {
+    var origOpen = XMLHttpRequest.prototype.open
+    XMLHttpRequest.prototype.open = function() {
+        this.addEventListener('load', function() {
+            routine()
+        });
+        origOpen.apply(this, arguments)
+    };
+})()
