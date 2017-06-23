@@ -28,14 +28,14 @@ function parseTimezoneOffset(timezoneOffset) {
     }
     var sign = Math.sign(offset)
     offset = Math.abs(offset)
-    var hours = Math.floor(offset / 100) + (offset % 100) / 60
+    var minutes = 60 * Math.floor(offset / 100) + (offset % 100)
 
-    return sign * hours
+    return sign * minutes
 }
 
 function getSecondsElapsedToday(timezoneOffset) {
     var nowTime = new Date()
-    var seconds = 3600 * (nowTime.getUTCHours() + parseTimezoneOffset(timezoneOffset)) + 60 * nowTime.getUTCMinutes() + nowTime.getUTCSeconds()
+    var seconds = 3600 * nowTime.getUTCHours() + 60 * (nowTime.getUTCMinutes() + parseTimezoneOffset(timezoneOffset)) + nowTime.getUTCSeconds()
     return (seconds + 86400) % 86400
 }
 
