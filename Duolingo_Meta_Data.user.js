@@ -9,20 +9,124 @@
 // ==/UserScript==
 
 
-(function () {
-    var origOpen = XMLHttpRequest.prototype.open
-    XMLHttpRequest.prototype.open = function() {
-        this.addEventListener('load', function() {
-            var XHREvent = new CustomEvent("XHR-loaded")
-            if (this.responseURL == 'https://www.duolingo.com/2017-06-08/sessions') {
-                XHREvent.response = this.response
-                document.dispatchEvent(XHREvent)
-            }
-            if (this.responseURL.startsWith('https://www.duolingo.com/2017-06-08/users/')) {
-                XHREvent.response = this.response
-                document.dispatchEvent(XHREvent)
-            }
-        })
-        origOpen.apply(this, arguments)
+
+// Fun fact: all this was painfully extracted from Duolingo's source code.
+// This is essentially the exact code used for drawing the graph of xp gains.
+var getEpochSeconds = function () {
+    return Math.floor(Date.now() / 1000)
     }
-})()
+
+var parseTimezoneOffset = function (timezoneOffset) {
+    var offset;
+    try {
+        offset = parseInt(timezoneOffset, 10) / 100
+    } catch (n) {
+        console.log('Invalid timezoneOffset', {
+            timezoneOffset: timezoneOffset
+        })
+        offset = 0
+    }
+    return offset
+}
+
+var getSecondsElapsedToday = function (timezoneOffset) {
+    var nowTime = new Date
+    var seconds = 3600 * (nowTime.getUTCHours() + parseTimezoneOffset(timezoneOffset)) + 60 * nowTime.getUTCMinutes() + nowTime.getUTCSeconds()
+    return (seconds + 86400) % 86400
+}
+
+var getXpToday = function (timezoneOffset, xpGains) {
+    return getXpPastWeek(timezoneOffset, xpGains)[6]
+}
+
+var getXpPastWeek = function (timezoneOffset, xpGains) {
+    var weeklyGains = [0,0,0,0,0,0,0]
+
+    if (!xpGains) return n
+
+    for (var secondsToday = getSecondsElapsedToday(timezoneOffset), epochSeconds = getEpochSeconds(), i = 0; i < xpGains.length; i++) {
+        var s = xpGains[i],
+        var lastMidnight = epochSeconds - secondsToday + 86400,
+        var daysAgo = Math.floor((lastMidnight - xpGains[i].time) / 86400);
+        0 <= daysAgo && daysAgo <= 6 && (weeklyGains[6 - daysAgo] += xpGains[i].xp)
+    }
+    return weeklyGains
+}
+
+
+// Gets the actual total xp for the current course.
+var getCurrentTotalXp = function() {
+    var data = JSON.parse(localStorage['duo.state'])
+    if (!data) {
+        return 0
+    }
+    var fromLanguage = data.user.fromLanguage
+    var learningLanguage = data.user.learningLanguage
+    return data.courses[learningLanguage + '<' + fromLanguage].xp
+}
+
+
+// Gets the current actual xp for today
+var getCurrentDailyXp = function() {
+    var data = JSON.parse(localStorage['duo.state'])
+    var timezoneOffset = data.user.timezoneOffset
+    var xpGains = data.user.xpGains
+
+    return getXpToday(timezoneOffset, xpGains)
+}
+    
+// Adds total xp to the dropdown menu
+var insertTotalXp = function(xp) {
+    if (document.getElementById('total-xp') !== null) {
+        return updateTotalXp(xp)
+    }
+
+    var xpElement = document.createElement('span')
+    
+    var text = document.createTextNode(' ' + xp + ' xp')
+    xpElement.appendChild(text)
+    xpElement.id = 'total-xp'
+    xpElement.classList.add('_1fA14')
+
+    document.querySelector('._1oVFS').appendChild(xpElement)
+}
+
+
+// Updates an existing total xp indicator
+var updateTotalXp = function(xp) {
+    var xpElement = document.getElementById('total-xp')
+    xpElement.firstChild.textContent = ' ' + xp + ' xp'
+}
+
+
+// Adds daily xp to the streak indicator
+var insertDailyXp = function(xp) {
+    if (document.getElementById('daily-xp') !== null) {
+        return updateDailyXp(xp)
+    }
+
+    var xpElement = document.createElement('span')
+
+    var text = document.createTextNode(': ' + xp + ' xp')
+    xpElement.appendChild(text)
+    xpElement.id = 'daily-xp'
+
+    document.querySelector('._2nE-k').appendChild(xpElement)
+}
+
+// Updates an existing daily xp indicator
+var updateDailyXp = function(xp) {
+    var xpElement = document.getElementById('daily-xp')
+    xpElement.firstChild.textContent = ': ' + xp + ' xp'
+}
+
+
+var routine = async function() {
+    totalXp = getCurrentTotalXp()
+    dailyXp = getCurrentDailyXp()
+    insertTotalXp(totalXp)
+    insertDailyXp(dailyXp)
+}
+
+
+setInterval(routine, 1000)
