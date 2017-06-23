@@ -8,5 +8,5 @@ Adds interesting data to the Duolingo interface in easier to access locations.
  * Chromium: [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en)
  * Firefox: [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/)
  * Safari: [JavaScript Blocker](http://javascript-blocker.toggleable.com/)
-2. Click [here](https://github.com/zeta12ti/DuoData/raw/master/Duolingo_Meta_Data.user.js) to install the userscript.
+2. Click [here](https://github.com/zeta12ti/DuoData/raw/master/DuoData.user.js) to install the userscript.
 3. Confirm the installation when prompted.
