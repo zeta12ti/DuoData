@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name        DuoData
+// @author      zeta12ti
 // @namespace   https://github.com/zeta12ti/DuoData
 // @updateURL   https://github.com/zeta12ti/DuoData/raw/master/DuoData.user.js
 // @description Adds some hidden data to Duolingo, including daily xp and total xp (on the top bar), fluency changes after a practice, and more.
 // @include     https://*.duolingo.com/*
 // @run-at      document-start
-// @version     1.2
+// @version     1.3
 // @grant       none
 // ==/UserScript==
 
@@ -144,8 +145,8 @@ function insertCourseXp() {
         for (var i=0, learningLanguage, fromLanguage, xp, xpElement, text; i<len; i++) {
             learningLanguage = courses[i].getAttribute('data-learning')
             fromLanguage = courses[i].getAttribute('data-from')
-            xp = duoStateCourses[learningLanguage + '<' + fromLanguage].xp
-            if (xp) {
+            try {
+                xp = duoStateCourses[learningLanguage + '<' + fromLanguage].xp
                 if (document.getElementById(learningLanguage + '-' + fromLanguage + '-xp') === null) {
                     xpElement = document.createElement('span')
 
@@ -160,6 +161,10 @@ function insertCourseXp() {
                     xpElement = document.getElementById(learningLanguage + '-' + fromLanguage + '-xp')
                     xpElement.firstChild.textContent = ' ' + xp + ' xp'
                 }
+            }
+            catch(e) {
+                console.log(e)
+                continue
             }
         }
     }
