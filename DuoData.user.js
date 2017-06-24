@@ -149,13 +149,8 @@ function insertCourseXp() {
         for (var i=0, learningLanguage, fromLanguage, xp, xpElement, text; i<len; i++) {
             learningLanguage = courses[i].getAttribute('data-learning')
             fromLanguage = courses[i].getAttribute('data-from')
-<<<<<<< HEAD
             try {
                 xp = duoStateCourses[learningLanguage + '<' + fromLanguage].xp
-=======
-            xp = duoStateCourses[learningLanguage + '<' + fromLanguage].xp
-            if (xp) {
->>>>>>> a50094b592d5fafd7e8bdeb32b2197b580a40e69
                 if (document.getElementById(learningLanguage + '-' + fromLanguage + '-xp') === null) {
                     xpElement = document.createElement('span')
 
@@ -170,13 +165,10 @@ function insertCourseXp() {
                     xpElement = document.getElementById(learningLanguage + '-' + fromLanguage + '-xp')
                     xpElement.firstChild.textContent = ' ' + xp + ' xp'
                 }
-<<<<<<< HEAD
             }
             catch(e) {
                 console.log(e)
                 continue
-=======
->>>>>>> a50094b592d5fafd7e8bdeb32b2197b580a40e69
             }
         }
     }
