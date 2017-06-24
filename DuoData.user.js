@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name        DuoData
 // @namespace   https://github.com/zeta12ti/DuoData
+// @updateURL   https://github.com/zeta12ti/DuoData/raw/master/DuoData.user.js
 // @description Adds some hidden data to Duolingo, including daily xp and total xp (on the top bar), fluency changes after a practice, and more.
 // @include     https://*.duolingo.com/*
 // @run-at      document-start
-// @version     1.1
+// @version     1.2
 // @grant       none
 // ==/UserScript==
 
@@ -144,19 +145,21 @@ function insertCourseXp() {
             learningLanguage = courses[i].getAttribute('data-learning')
             fromLanguage = courses[i].getAttribute('data-from')
             xp = duoStateCourses[learningLanguage + '<' + fromLanguage].xp
-            if (document.getElementById(learningLanguage + '-' + fromLanguage + '-xp') === null) {
-                xpElement = document.createElement('span')
+            if (xp) {
+                if (document.getElementById(learningLanguage + '-' + fromLanguage + '-xp') === null) {
+                    xpElement = document.createElement('span')
 
-                text = document.createTextNode(' ' + xp + ' xp')
-                xpElement.appendChild(text)
-                xpElement.id = learningLanguage + '-' + fromLanguage + '-xp'
-                xpElement.classList.add('_1fA14')
+                    text = document.createTextNode(' ' + xp + ' xp')
+                    xpElement.appendChild(text)
+                    xpElement.id = learningLanguage + '-' + fromLanguage + '-xp'
+                    xpElement.classList.add('_1fA14')
 
-                courses[i].appendChild(xpElement)
-            }
-            else {
-                xpElement = document.getElementById(learningLanguage + '-' + fromLanguage + '-xp')
-                xpElement.firstChild.textContent = ' ' + xp + ' xp'
+                    courses[i].appendChild(xpElement)
+                }
+                else {
+                    xpElement = document.getElementById(learningLanguage + '-' + fromLanguage + '-xp')
+                    xpElement.firstChild.textContent = ' ' + xp + ' xp'
+                }
             }
         }
     }
