@@ -6,11 +6,7 @@
 // @description Adds some hidden data to Duolingo, including daily xp and total xp (on the top bar), fluency changes after a practice, and more.
 // @include     https://*.duolingo.com/*
 // @run-at      document-start
-<<<<<<< HEAD
 // @version     1.3
-=======
-// @version     1.2
->>>>>>> a50094b592d5fafd7e8bdeb32b2197b580a40e69
 // @grant       none
 // ==/UserScript==
 
