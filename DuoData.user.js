@@ -21,6 +21,7 @@ function getEpochSeconds() {
     return Math.floor(Date.now() / 1000)
 }
 
+
 function parseTimezoneOffset(timezoneOffset) {
     var offset;
     try {
@@ -38,15 +39,18 @@ function parseTimezoneOffset(timezoneOffset) {
     return sign * minutes
 }
 
+
 function getSecondsElapsedToday(timezoneOffset) {
     var nowTime = new Date()
     var seconds = 3600 * nowTime.getUTCHours() + 60 * (nowTime.getUTCMinutes() + parseTimezoneOffset(timezoneOffset)) + nowTime.getUTCSeconds()
     return (seconds + 86400) % 86400
 }
 
+
 function getXpToday(timezoneOffset, xpGains) {
     return getXpPastWeek(timezoneOffset, xpGains)[6]
 }
+
 
 function getXpPastWeek(timezoneOffset, xpGains) {
     var weeklyGains = [0,0,0,0,0,0,0]
@@ -104,6 +108,7 @@ function insertDailyXp(xp) {
 
     document.querySelector('._2nE-k').appendChild(xpElement)
 }
+
 
 // Updates an existing daily xp indicator
 function updateDailyXp(xp) {
@@ -163,15 +168,11 @@ function insertCourseXp() {
                 }
             }
             catch(e) {
-                console.log(e)
                 continue
             }
         }
     }
 }
-            
-    
-            
 
 
 // Adds/updates everything
@@ -187,6 +188,7 @@ if (document.readyState === 'complete') { routine() }
 else {
     window.addEventListener('load', routine)
 }
+
 
 // and every time an AJAX request completes
 // The data is only updated after AJAX requests anyway
