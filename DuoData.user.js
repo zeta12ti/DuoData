@@ -6,7 +6,7 @@
 // @description Adds some hidden data to Duolingo, including daily xp and total xp (on the top bar), fluency changes after a practice, and more.
 // @include     https://*.duolingo.com/*
 // @run-at      document-start
-// @version     1.4
+// @version     1.5
 // @grant       none
 // ==/UserScript==
 
@@ -96,21 +96,23 @@ function updateDailyXp (xp) {
 
 // Adds data to the course list to indicate languages
 function addCourseData () {
-  if (document.querySelectorAll('._2kNgI').length === 0) { return false }
+  // we'll iterate over place that have a level indicator
+  if (document.querySelectorAll('._1fA14:not(.xp-indicator)').length === 0) { return false }
 
-  var courses = document.querySelectorAll('._2kNgI')
-  var fromLanguage = window.duo.uiLanguage
-  var len = courses.length
-  for (var i = 0, bigFlag, littleFlag; i < len; i++) {
-    if (courses[i].querySelectorAll('._2IJLr').length === 0) {
-      bigFlag = courses[i].querySelector('._3vx2Z')
-      courses[i].setAttribute('data-learning', getLanguageFromFlag(bigFlag.classList[0]))
-      courses[i].setAttribute('data-from', fromLanguage)
-    } else {
-      bigFlag = courses[i].querySelector('._2IJLr')
-      littleFlag = courses[i].querySelector('._2c_Ro')
-      courses[i].setAttribute('data-learning', getLanguageFromFlag(bigFlag.classList[0]))
-      courses[i].setAttribute('data-from', getLanguageFromFlag(littleFlag.classList[0]))
+  var courses = document.querySelectorAll('._1fA14:not(.xp-indicator)')
+  var uiLanguage = window.duo.uiLanguage
+  for (var i = 0, len = courses.length, bigFlag, littleFlag; i < len; i++) {    
+    if (typeof courses[i].parentNode.dataset.learning === 'undefined' || typeof courses[i].parentNode.dataset.from === 'undefined') {
+      if (courses[i].parentNode.querySelectorAll('._2IJLr').length === 0) {
+        bigFlag = courses[i].parentNode.querySelector('._3vx2Z')
+        courses[i].parentNode.dataset.learning = getLanguageFromFlag(bigFlag.classList[0])
+        courses[i].parentNode.dataset.from = uiLanguage
+      } else {
+        bigFlag = courses[i].parentNode.querySelector('._2IJLr')
+        littleFlag = courses[i].parentNode.querySelector('._2c_Ro')
+        courses[i].parentNode.dataset.learning = getLanguageFromFlag(bigFlag.classList[0])
+        courses[i].parentNode.dataset.from = getLanguageFromFlag(littleFlag.classList[0])
+      }
     }
   }
   return true
@@ -119,28 +121,29 @@ function addCourseData () {
 // Adds xp indicators for every course
 function insertCourseXp () {
   if (addCourseData()) {
-    var courses = document.querySelectorAll('._2kNgI')
+    var courses = document.querySelectorAll('._1fA14:not(.xp-indicator)')
     var duoStateCourses = JSON.parse(window.localStorage['duo.state']).courses
     var len = courses.length
     for (var i = 0, learningLanguage, fromLanguage, xp, xpElement, text; i < len; i++) {
-      learningLanguage = courses[i].getAttribute('data-learning')
-      fromLanguage = courses[i].getAttribute('data-from')
+      learningLanguage = courses[i].parentNode.dataset.learning
+      fromLanguage = courses[i].parentNode.dataset.from
       try {
         xp = duoStateCourses[learningLanguage + '<' + fromLanguage].xp
-        if (document.getElementById(learningLanguage + '-' + fromLanguage + '-xp') === null) {
+        if (courses[i].parentNode.querySelector('.xp-indicator') === null) {
           xpElement = document.createElement('span')
 
           text = document.createTextNode(' ' + xp + ' xp')
           xpElement.appendChild(text)
-          xpElement.id = learningLanguage + '-' + fromLanguage + '-xp'
+          xpElement.classList.add('xp-indicator')
           xpElement.classList.add('_1fA14')
 
-          courses[i].appendChild(xpElement)
+          courses[i].parentNode.appendChild(xpElement)
         } else {
-          xpElement = document.getElementById(learningLanguage + '-' + fromLanguage + '-xp')
+          xpElement = courses[i].parentNode.querySelector('.xp-indicator')
           xpElement.firstChild.textContent = ' ' + xp + ' xp'
         }
       } catch (e) {
+        console.log(e)
         continue
       }
     }
