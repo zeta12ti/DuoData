@@ -6,7 +6,7 @@
 // @description Adds some hidden data to Duolingo, including daily xp and total xp (on the top bar), fluency changes after a practice, and more.
 // @include     https://*.duolingo.com/*
 // @run-at      document-start
-// @version     1.5.1
+// @version     1.5.2
 // @grant       none
 // ==/UserScript==
 
@@ -128,7 +128,7 @@ function insertCourseXp () {
       learningLanguage = courses[i].parentNode.dataset.learning
       fromLanguage = courses[i].parentNode.dataset.from
       try {
-        xp = duoStateCourses[learningLanguage + '<' + fromLanguage].xp || 0
+        xp = duoStateCourses['DUOLINGO_' + learningLanguage.toUpperCase() + '_' + fromLanguage.toUpperCase()].xp || 0
         if (courses[i].parentNode.querySelector('.xp-indicator') === null) {
           xpElement = document.createElement('span')
 
