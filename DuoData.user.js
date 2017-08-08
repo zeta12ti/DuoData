@@ -6,13 +6,14 @@
 // @description Adds some hidden data to Duolingo, including daily xp and total xp for each course.
 // @include     https://*.duolingo.com/*
 // @run-at      document-start
-// @version     1.5.3
+// @version     1.5.4
 // @grant       none
 // ==/UserScript==
 
 var inverseFlags = {'OgUIe': 'hi', 'YhWo_': 'hv', '_107sn': 'id', '_12U6e': 'ro', '_1ARRD': 'ar', '_1KtzC': 'vi', '_1PruQ': 'it', '_1S3hi': 'hu', '_1eqxJ': 'ru', '_1fajz': 'nl-NL', '_1h0xh': 'da', '_1jO8h': 'cy', '_1q_MQ': 'tl', '_1tJJ2': 'tr', '_1uPQW': 'cs', '_1vhNM': 'ga', '_1zZsN': 'uk', '_200jU': 'no-BO', '_24xu4': 'gn', '_2DMfV': 'sv', '_2KQN3': 'fr', '_2N-Uj': 'ja', '_2TXAL': 'bn', '_2cR-E': 'en', '_2gNgd': 'zh-CN', '_2lkzc': 'ko', '_2oTcA': 'th', '_2tQo9': 'el', '_3AA1F': 'dk', '_3T1km': 'sw', '_3uusw': 'pl', '_6mRM': 'tlh', '_PDrK': 'he', 'mc4rg': 'ca', 'oboa9': 'de', 'pWj0w': 'eo', 'pmGwL': 'pt', 'q_PD-': 'sn', 't-XH-': 'un', 'u5W-o': 'es', 'xi6jQ': 'zh'}
 function getLanguageFromFlag (flagCode) {
-  return inverseFlags[flagCode]
+  // Duolingo has started using the taiwanese flag for Chinese, but only inconsistently
+  return {'xi6jQ': 'zh-CN'}[flagCode] || inverseFlags[flagCode]
 }
 
 function getEpochSeconds () {
